@@ -30,7 +30,7 @@ class PPGDataset(Dataset):
     def extract_data(self):
         self.find_ppg_files()
         self.logger.info(f"Found {len(self.file_names)} PPG files in {self.folder_path}")
-        for file_name in self.file_names[1:2]:
+        for file_name in self.file_names:
             self.logger.info(f"Processing file {file_name}")
             raw_signal = self.load_file(file_name)
             if raw_signal.size == 0:
