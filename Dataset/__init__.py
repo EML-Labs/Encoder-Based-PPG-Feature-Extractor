@@ -88,8 +88,8 @@ class PPGDataset(Dataset):
             quality_segment = quality[start:start + segment_length]
             raw_segment = raw_signal[start:start + segment_length]
             if quality_segment.min() >= self.quality_threshold:
-                cleaned_segments.append(min_max_scaler(segment[self.padding:-self.padding]))
-                raw_segments.append(min_max_scaler(raw_segment[self.padding:-self.padding]))
+                cleaned_segments.append(min_max_scaler(np.array(segment[self.padding:-self.padding])))
+                raw_segments.append(min_max_scaler(np.array(raw_segment[self.padding:-self.padding])))
         return cleaned_segments, raw_segments, len(cleaned_segments)
 
 
