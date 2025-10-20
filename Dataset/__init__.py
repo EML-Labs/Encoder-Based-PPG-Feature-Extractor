@@ -30,7 +30,7 @@ class PPGDataset(Dataset):
     def extract_data(self):
         self.find_ppg_files()
         self.logger.info(f"Found {len(self.file_names)} PPG files in {self.folder_path}")
-        for file_name in self.file_names:
+        for file_name in self.file_names[1:2]:
             self.logger.info(f"Processing file {file_name}")
             raw_signal = self.load_file(file_name)
             if raw_signal.size == 0:
@@ -40,12 +40,12 @@ class PPGDataset(Dataset):
             if cleaned_signal.size == 0 or quality.size == 0:
                 self.logger.warning(f"Skipping file {file_name} due to cleaning error.")
                 continue
-            segments, raw_segments, num_segments = self.extract_high_quality_segments(cleaned_signal, raw_signal, quality)
-            self.ppg_signals.extend(segments)
+            cleaned_segments, raw_segments, num_segments = self.extract_high_quality_segments(cleaned_signal, raw_signal, quality)
+            self.cleaned_ppg_signals.extend(cleaned_segments)
             self.raw_ppg_signals.extend(raw_segments)
             self.logger.info(f"Extracted {num_segments} high-quality segments from {file_name}")
-        assert len(self.ppg_signals) == len(self.raw_ppg_signals), "Mismatch between cleaned and raw PPG segments"
-        self.logger.info(f"Total high-quality PPG segments extracted: {len(self.ppg_signals)}")
+        assert len(self.cleaned_ppg_signals) == len(self.raw_ppg_signals), "Mismatch between cleaned and raw PPG segments"
+        self.logger.info(f"Total high-quality PPG segments extracted: {len(self.cleaned_ppg_signals)}")
 
     def find_ppg_files(self):
         records = "RECORDS"
@@ -88,8 +88,8 @@ class PPGDataset(Dataset):
             quality_segment = quality[start:start + segment_length]
             raw_segment = raw_signal[start:start + segment_length]
             if quality_segment.min() >= self.quality_threshold:
-                cleaned_segments.append(min_max_scaler(np.array(segment[self.padding:-self.padding])))
-                raw_segments.append(min_max_scaler(np.array(raw_segment[self.padding:-self.padding])))
+                cleaned_segments.append(min_max_scaler(np.array(segment[self.padding*self.sampling_rate:-self.padding*self.sampling_rate])))
+                raw_segments.append(min_max_scaler(np.array(raw_segment[self.padding*self.sampling_rate:-self.padding*self.sampling_rate])))
         return cleaned_segments, raw_segments, len(cleaned_segments)
 
 
