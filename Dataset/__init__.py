@@ -132,7 +132,7 @@ class ContrastivePPGDataset(Dataset):
         self.find_ppg_files()
         self.logger.info(f"Found SR {len(self.sr_file_names)} PPG files in {self.folder_path}")
         self.logger.info(f"Found AF {len(self.af_file_names)} PPG files in {self.folder_path}")
-        for file_name in self.sr_file_names[:1]:
+        for file_name in self.sr_file_names:
             self.logger.info(f"Processing file {file_name}")
             sr_path = os.path.join(self.folder_path, 'SR-Data')
             raw_signal = self.load_file(sr_path, file_name)
@@ -146,7 +146,7 @@ class ContrastivePPGDataset(Dataset):
             cleaned_segments, num_segments = self.extract_high_quality_segments(cleaned_signal, raw_signal, quality, self.quality_threshold)
             self.af_ppg_signals.extend(cleaned_segments)
             self.logger.info(f"Extracted {num_segments} high-quality segments from {file_name}")
-        for file_name in self.af_file_names[:1]:
+        for file_name in self.af_file_names:
             self.logger.info(f"Processing file {file_name}")
             af_path = os.path.join(self.folder_path, 'AF-Data')
             raw_signal = self.load_file(af_path, file_name)
